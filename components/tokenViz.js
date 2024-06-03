@@ -24,7 +24,7 @@ function combineTokensWithImportance(tokens, importanceArray) {
 
 class TokenViz {
     margin = {
-        top: 10, right: 20, bottom: 10, left: 20
+        top: 15, right: 20, bottom: 15, left: 20
     }
 
     constructor(svg, width = 860, height = 110, sampleSize = 253) {
@@ -46,7 +46,6 @@ class TokenViz {
         this.z = d3.scaleOrdinal()
             .range(d3.schemeCategory10)
             .domain(models);
-
     }
 
     update(tokens, importance, selectedIndices, selectedModel) {
@@ -64,13 +63,17 @@ class TokenViz {
         this.svg
             .attr("height", this.height + this.margin.top + this.margin.bottom);
 
+        var display = this.svg.style("display");
+        if (display === "none") {
+            this.svg.style("display", "block");
+        }
         this.container.selectAll("g").remove();
         this.container.selectAll("g")
             .data(tokens_importance)
             .join("g")
             .each(function (d){
-                const g = d3.select(this);
 
+                const g = d3.select(this);
                 g.append('text')
                     .attr("x", self.margin.left + xOffset)
                     .attr("y",  y + tokenHeight/2)
@@ -125,6 +128,9 @@ class TokenViz {
                     d3.select(".tooltip").style("display", "none");
                 });
             });
+        if (display === "none") {
+            this.svg.style("display", "none");
+        }
     }
     on(eventType, handler)
     {

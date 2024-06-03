@@ -99,18 +99,14 @@
                 <svg id="waveform" width=900 height="110" >
                 </svg>
             </div>
-            <div class="text-center pt-2">
-                <svg id="tokenViz" width=900 overflow="auto">
-
-                </svg>
+            <div class="text-center pt-2" id="tokenViz">
             </div>
         </div>
     </main>
 
     <script>
-        let data, barchart, boxplot, waveform, order;
+        let data, barchart, boxplot, waveform, tokenViz, order;
         let selectedIndices;
-        let selectedModel = 'Ours';
         let caption = d3.selectAll("#caption");
         d3.selectAll("#data_id").on("change", updateID);
 
@@ -136,16 +132,15 @@
                 caption.text(jsonData.caption);
                 waveform.update(jsonData.audio);
 
-                tokenViz.update(jsonData.tokens, jsonData[selectedModel], selectedIndices, selectedModel);
+                order.forEach(model => {
+                    tokenViz.find(d => d.model === model).tokenViz.update(jsonData.tokens, jsonData[model], selectedIndices, model);
+                });
 
                 waveform.on("brush", (s) => {
                     selectedIndices = s;
-                    tokenViz.update(jsonData.tokens, jsonData[selectedModel], selectedIndices, selectedModel);
-                });
-
-                d3.selectAll("input[name='model']").on("change", function() {
-                    selectedModel = this.value;
-                    tokenViz.update(jsonData.tokens, jsonData[selectedModel], selectedIndices, selectedModel);
+                    order.forEach(model => {
+                        tokenViz.find(d => d.model === model).tokenViz.update(jsonData.tokens, jsonData[model], selectedIndices, model);
+                    });
                 });
 
             }).catch(function(error) {
@@ -157,17 +152,16 @@
                 var modelSelector = d3.select("#model_selector");
                 order.forEach(model => {
                     modelSelector.append("label")
-                        .attr("for", `radio_${model}`)
+                        .attr("for", `check_${model}`)
                         .style("margin-right", "3px")
                         .text(model);
                     modelSelector.append("input")
-                        .attr("type", "radio")
+                        .attr("type", "checkbox")
                         .attr("name", "model")
                         .attr("value", model)
-                        .attr("id", `radio_${model}`)
+                        .attr("id", `check_${model}`)
                         .style("margin-right", "10px")
                         .property("checked", model === 'Ours');
-
                 });
         }
 
@@ -190,8 +184,38 @@
                 waveform = new Waveform("#waveform", width=860, height=50);
                 waveform.initialize();
 
-                tokenViz = new TokenViz("#tokenViz", width=860, height=50);
-                tokenViz.initialize(order);
+
+                tokenViz = order.map(model => {
+                    console.log()
+                    var svg = d3.select("#tokenViz").append('svg')
+                        .attr('id', `tokenViz_${model}`)
+                        .attr('width', 900)
+                        .style('margin-top' , '10px')
+                        .style('display', d3.select(`input[value=${model}]`).property('checked') ? 'block' : 'none');
+
+                    svg.append("text")
+                            .attr("x", 10)
+                            .attr("y", 20)
+                            .attr("font-size", "16px")
+                            .attr("font-weight", "bold")
+                            .text(model);
+
+                    var modelViz = new TokenViz(`#tokenViz_${model}`, width=860, height=50);
+                    modelViz.initialize(order);
+                    return {
+                        model : model,
+                        tokenViz : modelViz
+                    }
+                })
+
+                d3.selectAll("input[name='model']").on("change", function() {
+                    if(d3.select(this).property("checked")){
+                        d3.select(`#tokenViz_${this.value}`).style('display', 'block');
+                    }
+                    else{
+                        d3.select(`#tokenViz_${this.value}`).style('display', 'none');
+                    }
+                });
         })
 
     </script>
