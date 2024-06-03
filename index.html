@@ -130,7 +130,7 @@
             barchart.update(ID);
             boxplot.update(ID);
 
-            let jsonUrl = `https://raw.githubusercontent.com/gunhee8178/infoViz_2024/e2035258abc935d15352cc8d5654523955be43ab/data/importance/${ID}.json`;
+            let jsonUrl = `./data/importance/${ID}.json`;
             selectedIndices = null;
             d3.json(jsonUrl).then(function(jsonData) {
                 caption.text(jsonData.caption);
@@ -171,7 +171,7 @@
                 });
         }
 
-        d3.csv("https://raw.githubusercontent.com/gunhee8178/infoViz_2024/main/data/data.csv")
+        d3.csv("./data/data.csv")
             .then(csvData => {
                 data = csvData;
                 order = data.columns.filter(col => col.includes('mean')).map(col => col.replace('_mean', ''))
@@ -193,11 +193,6 @@
                 tokenViz = new TokenViz("#tokenViz", width=860, height=50);
                 tokenViz.initialize(order);
         })
-
-
-
-
-
 
     </script>
 </body>
