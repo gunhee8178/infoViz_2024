@@ -63,10 +63,10 @@ class TokenViz {
         this.svg
             .attr("height", this.height + this.margin.top + this.margin.bottom);
 
-        var display = this.svg.style("display");
-        if (display === "none") {
-            this.svg.style("display", "block");
-        }
+        // var display = this.svg.style("display");
+        // if (display === "none") {
+        //     this.svg.style("display", "block");
+        // }
         this.container.selectAll("g").remove();
         this.container.selectAll("g")
             .data(tokens_importance)
@@ -128,9 +128,9 @@ class TokenViz {
                     d3.select(".tooltip").style("display", "none");
                 });
             });
-        if (display === "none") {
-            this.svg.style("display", "none");
-        }
+        // if (display === "none") {
+        //     this.svg.style("display", "none");
+        // }
     }
     on(eventType, handler)
     {

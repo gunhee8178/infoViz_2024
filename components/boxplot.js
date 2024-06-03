@@ -47,17 +47,15 @@ class Boxplot {
             .range(d3.schemeCategory10)
             .domain([...new Set(this.data.map(d => d.model))])
 
-        var y = this.y;
-        var z = this.z;
-
         const xAxisCall = d3.axisBottom(this.x);
         this.xAxisGroup.call(xAxisCall);
 
         const yAxisCall = d3.axisLeft(this.y);
         this.yAxis.call(yAxisCall);
 
-        const boxWidth = this.x.bandwidth() * 0.8;
+        const boxWidth = this.x.bandwidth();
 
+        const self = this
         this.container.selectAll("g")
             .data(this.data)
             .join("g")
@@ -74,19 +72,19 @@ class Boxplot {
                 // Draw the box
                 g.append("rect")
                     .attr("class", "box")
-                    .attr("x", boxWidth * 0.1)
-                    .attr("y", y(q3))
-                    .attr("width", boxWidth * 0.8)
-                    .attr("height", y(q1) - y(q3))
-                    .attr("fill", z(d.model));
+                    .attr("x", boxWidth * 0.2)
+                    .attr("y", self.y(q3))
+                    .attr("width", boxWidth * 0.6)
+                    .attr("height", self.y(q1) - self.y(q3))
+                    .attr("fill", self.z(d.model));
 
                 // Draw the median line
                 g.append("line")
                     .attr("class", "median")
-                    .attr("x1", boxWidth * 0.1)
-                    .attr("x2", boxWidth * 0.9)
-                    .attr("y1", y(median))
-                    .attr("y2", y(median))
+                    .attr("x1", boxWidth * 0.2)
+                    .attr("x2", boxWidth * 0.8)
+                    .attr("y1", self.y(median))
+                    .attr("y2", self.y(median))
                     .attr("stroke", "black")
                     .attr("stroke-width", 1);
 
@@ -95,27 +93,27 @@ class Boxplot {
                     .attr("class", "whisker")
                     .attr("x1", boxWidth / 2)
                     .attr("x2", boxWidth / 2)
-                    .attr("y1", y(min))
-                    .attr("y2", y(max))
+                    .attr("y1", self.y(min))
+                    .attr("y2", self.y(max))
                     .attr("stroke", "black")
                     .attr("stroke-width", 1);
 
                 // Draw the lines connecting to whiskers
                 g.append("line")
                     .attr("class", "whisker")
-                    .attr("x1", boxWidth * 0.1)
-                    .attr("x2", boxWidth * 0.9)
-                    .attr("y1", y(min))
-                    .attr("y2", y(min))
+                    .attr("x1", boxWidth * 0.2)
+                    .attr("x2", boxWidth * 0.8)
+                    .attr("y1", self.y(min))
+                    .attr("y2", self.y(min))
                     .attr("stroke", "black")
                     .attr("stroke-width", 1);
 
                 g.append("line")
                     .attr("class", "whisker")
-                    .attr("x1", boxWidth * 0.1)
-                    .attr("x2", boxWidth * 0.9)
-                    .attr("y1", y(max))
-                    .attr("y2", y(max))
+                    .attr("x1", boxWidth * 0.2)
+                    .attr("x2", boxWidth * 0.8)
+                    .attr("y1", self.y(max))
+                    .attr("y2", self.y(max))
                     .attr("stroke", "black")
                     .attr("stroke-width", 1);
 
@@ -125,7 +123,7 @@ class Boxplot {
     update(highlightIndex) {
         this.container.selectAll(".highlight").remove(); // Remove previous highlights
 
-        const boxWidth = this.x.bandwidth() * 0.8;
+        const boxWidth = this.x.bandwidth();
         const self = this;
 
         this.container.selectAll("g")

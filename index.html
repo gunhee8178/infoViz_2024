@@ -191,7 +191,9 @@
                         .attr('id', `tokenViz_${model}`)
                         .attr('width', 900)
                         .style('margin-top' , '10px')
-                        .style('display', d3.select(`input[value=${model}]`).property('checked') ? 'block' : 'none');
+                        .style('visibility', d3.select(`input[value=${model}]`).property('checked') ? 'visible' : 'hidden')
+                        .style('position', d3.select(`input[value=${model}]`).property('checked') ? 'static' : 'absolute')
+                    ;
 
                     svg.append("text")
                             .attr("x", 10)
@@ -210,10 +212,14 @@
 
                 d3.selectAll("input[name='model']").on("change", function() {
                     if(d3.select(this).property("checked")){
-                        d3.select(`#tokenViz_${this.value}`).style('display', 'block');
+                        d3.select(`#tokenViz_${this.value}`)
+                            .style('visibility', 'visible')
+                            .style('position', 'static');
                     }
                     else{
-                        d3.select(`#tokenViz_${this.value}`).style('display', 'none');
+                        d3.select(`#tokenViz_${this.value}`)
+                            .style('visibility', 'hidden')
+                            .style('position', 'absolute');
                     }
                 });
         })
